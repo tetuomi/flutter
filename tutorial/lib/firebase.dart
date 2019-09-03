@@ -1,71 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'talkarea.dart';
 
-void main() => runApp(MyHomePage());
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new MaterialApp(
+      title: 'TabBar',
+      theme: new ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: new MyHomePage(title: 'Flutter Demo Home Page'),
+    );
+  }
+}
 
 class MyHomePage extends StatefulWidget {
+  MyHomePage({Key key, this.title}) : super(key: key);
+  final String title;
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _MyHomePageState createState() => new _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var count = 1;
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Firestore Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Scaffold(
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
         appBar: AppBar(
-          title: Text('Flutter Firestore Demo'),
+          title: Center(),
+          bottom: TabBar(
+            tabs: <Widget>[
+              Tab(icon: Icon(Icons.tag_faces,),),
+              Tab(icon: Icon(Icons.speaker_notes,),),
+              Tab(icon: Icon(Icons.wc,),),
+            ],
+          ),
         ),
-        body: createListView(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // Firestore 上にデータを追加
-            Firestore.instance.collection('books').add({
-              'title': 'タイトル$count',
-              'author': '著者$count',
-            });
-            count += 1;
-          },
-          child: Icon(Icons.add),
-        ),
+        body: TabBarView(
+          children: <Widget>[
+            Container(
+              color: Colors.yellow,
+              child: Center(
+                child: Text('tetsu',),
+              ),
+            ),
+            Container(
+              color: Colors.orange,
+              child: new TalkArea(),
+            ),
+            Container(color: Colors.red,),
+          ]),
       ),
-    );
-  }
-
-  createListView() {
-    Firestore.instance.collection('books').snapshots().listen((data) {
-      print(data);
-    });
-
-    return StreamBuilder(
-      stream: Firestore.instance.collection('books').snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        // エラーの場合
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-
-        // 通信中の場合
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return Text('Loading ...');
-          default:
-            return ListView(
-              children: snapshot.data.documents.map((DocumentSnapshot document) {
-                return new ListTile(
-                  title: new Text(document['title']),
-                  subtitle: new Text(document['author']),
-                );
-              }).toList(),
-            );
-        }
-      },
     );
   }
 }
