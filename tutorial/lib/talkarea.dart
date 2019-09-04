@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TalkArea extends StatefulWidget {
   @override
@@ -22,11 +23,11 @@ class _TalkArea extends State<TalkArea> {
       //crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Container(
-          height: 100.0,
+          height: 300.0,
           width: double.infinity,
           padding: EdgeInsets.all(10.0),
           margin: EdgeInsets.all(10.0),
-          child: Text(this.text),
+          child: createListView(),
         ),
         TextField(
           controller: myController,
@@ -43,11 +44,39 @@ class _TalkArea extends State<TalkArea> {
           onPressed: (){
             setState((){
               text =  myController.text;
+              Firestore.instance.collection('talk').add({
+              'content': '$text'});
               myController.clear();
             });
           },
         ),
       ],
+    );
+  }
+
+  createListView() {
+    return StreamBuilder(
+      stream: Firestore.instance.collection('talk').snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        // エラーの場合
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+
+        // 通信中の場合
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return Text('Loading ...');
+          default:
+            return ListView(
+              children: snapshot.data.documents.map((DocumentSnapshot document) {
+                return new ListTile(
+                  title: new Text(document['content']),
+                );
+              }).toList(),
+            );
+        }
+      },
     );
   }
 }

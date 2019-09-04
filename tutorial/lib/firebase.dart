@@ -28,32 +28,41 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
-          title: Center(),
+          title: Center(
+            child: Text('felmin'),
+          ),
           bottom: TabBar(
             tabs: <Widget>[
               Tab(icon: Icon(Icons.tag_faces,),),
               Tab(icon: Icon(Icons.speaker_notes,),),
               Tab(icon: Icon(Icons.wc,),),
+              Tab(icon: Icon(Icons.add),),
             ],
           ),
         ),
         body: TabBarView(
           children: <Widget>[
             Container(
-              color: Colors.yellow,
+              color: Colors.white,
               child: Center(
                 child: Text('tetsu',),
               ),
             ),
             Container(
-              color: Colors.orange,
+              color: Colors.white,
               child: new TalkArea(),
             ),
-            Container(color: Colors.red,),
-          ]),
+            Container(
+              color: Colors.white,
+            ),
+            Container(
+              color: Colors.white,
+            ),
+          ]
+        ),
       ),
     );
   }
