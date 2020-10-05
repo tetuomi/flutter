@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'UserState.dart';
 
 class HomePage extends StatelessWidget {
@@ -20,7 +19,9 @@ class HomePage extends StatelessWidget {
           );
         },),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.read<UsersController>().addUser("newName", "newText"),
+        onPressed: () {
+          Navigator.of(context).pushNamed('/add');
+        },
         label: Text('Add'),
         icon: Icon(Icons.add),
       ),
