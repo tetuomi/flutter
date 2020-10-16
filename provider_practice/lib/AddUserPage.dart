@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'UserState.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddUserPage extends StatelessWidget {
   final _textEditingController = TextEditingController();
@@ -17,6 +18,10 @@ class AddUserPage extends StatelessWidget {
               children: <Widget>[
                 FlatButton(
                   onPressed: () {
+                    FirebaseFirestore.instance.collection('users').add({
+                      'name': "tettta",
+                      'text': '${_textEditingController.value.text}'
+                    });
                     context.read<UsersController>()
                         .addUser("tetta", _textEditingController.value.text);
                     _textEditingController.text = '';
